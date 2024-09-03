@@ -1,0 +1,6 @@
+Mediapipe hand tracking
+v
+Custom deep learning network
+(Can we leverage existing object detection models?)
+v
+Realtime ASL to english translator
