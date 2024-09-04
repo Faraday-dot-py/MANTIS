@@ -1,56 +1,51 @@
 import cv2
-import time
 import os
+import time
 
-# Create a directory to save the video
-save_dir = 'captured_videos'
+# Create a directory to save the images
+save_dir = "captured_images"
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
-# Initialize the webcam
+# Initialize the webcam (0 is the default camera)
 cap = cv2.VideoCapture(0)
 
+# Check if the webcam is opened correctly
 if not cap.isOpened():
-    print("Error: Could not open webcam.")
+    print("Error: Could not open the webcam.")
     exit()
 
-# Get the frame width and height
-frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# Set the total number of images to capture
+num_images = 20
+capture_interval = 0.1  # in seconds
 
-# Define the codec and create a VideoWriter object
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter(os.path.join(save_dir, 'video.avi'), fourcc, 20.0, (frame_width, frame_height))
+print("Capturing images...")
 
-# Record for 10 seconds
-start_time = time.time()
-recording_duration = 10  # seconds
+for i in range(num_images):
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+    
+    if not ret:
+        print("Error: Failed to capture image.")
+        break
 
-try:
-    while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-        if not ret:
-            print("Error: Could not read frame.")
-            break
-        
-        # Write the frame to the video file
-        out.write(frame)
-        
-        # Check if the recording time is up
-        elapsed_time = time.time() - start_time
-        if elapsed_time > recording_duration:
-            break
-        
-        # Optionally display the frame (for debugging)
-        cv2.imshow('Frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    # Display the captured image
+    cv2.imshow("Captured Image", frame)
 
-finally:
-    # Release the webcam and video writer
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
+    # Create the filename and save the image
+    filename = os.path.join(save_dir, f"image_{i+1:02d}.jpg")
+    cv2.imwrite(filename, frame)
+    print(f"Saved {filename}")
 
-    print("Video recording finished and saved.")
+    # Wait for the specified interval
+    time.sleep(capture_interval)
+
+    # Check if the user wants to quit early by pressing the 'q' key
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the webcam and close any OpenCV windows
+cap.release()
+cv2.destroyAllWindows()
+
+print("Finished capturing images.")
