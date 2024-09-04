@@ -119,7 +119,7 @@ class TemporalMap:
 
             # Run the hand tracking model
             detection_result = self.detector.detect(image)
-            print('Found landmarks on image ' + file_name)
+            # print('Found landmarks on image ' + file_name)
 
             # Draw landmarks on our input image
             annotated_image = self.drawLandmarksOnImage(image.numpy_view(), detection_result)
@@ -132,7 +132,7 @@ class TemporalMap:
             
             # Save the labeled image
             cv2.imwrite(f'./labeled_images/{file_name}', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
-            print('Saved labeled image ' + file_name)
+            # print('Saved labeled image ' + file_name)
 
             
             '''
@@ -155,12 +155,13 @@ class TemporalMap:
             temporalImageArray = np.array([temporalImageArray])
             temporalImage = Image.fromarray(temporalImageArray, 'RGB')
             temporalImage.save(f'./output_images/{file_name}')
-            print('Saved temporal image ' + file_name)
+            # print('Saved temporal image ' + file_name)
 
             '''
             <<<<
             This is where temporal ends...
             '''
+        return temporalImageArray
 
 if __name__ == '__main__':
     tmap = TemporalMap()

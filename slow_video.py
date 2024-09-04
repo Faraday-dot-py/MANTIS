@@ -3,7 +3,8 @@ import os
 import time
 
 # Create a directory to save the images
-save_dir = "captured_images"
+
+save_dir = f'captured_images/l2r/capture_{len(os.listdir('captured_images/l2r'))}'
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
 
@@ -16,12 +17,14 @@ if not cap.isOpened():
     exit()
 
 # Set the total number of images to capture
-num_images = 20
-capture_interval = 0.1  # in seconds
+imagesPerSecond = 30
+numImages = 40
+stime = time.time()
+captureInterval = 1/imagesPerSecond  # in seconds
 
 print("Capturing images...")
 
-for i in range(num_images):
+for i in range(numImages):
     # Capture frame-by-frame
     ret, frame = cap.read()
     
@@ -38,11 +41,13 @@ for i in range(num_images):
     print(f"Saved {filename}")
 
     # Wait for the specified interval
-    time.sleep(capture_interval)
+    # time.sleep(capture_interval)
 
     # Check if the user wants to quit early by pressing the 'q' key
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+# print(time.time()-stime)
 
 # Release the webcam and close any OpenCV windows
 cap.release()
