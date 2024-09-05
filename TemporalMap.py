@@ -7,18 +7,24 @@ from collections import deque
 import numpy as np
 import matplotlib.animation as animation
 import cv2
+import os
 
 BLANK_IMAGE = np.zeros((60, 42, 3), dtype=np.uint8)
 BLANK_LINE = np.zeros((21, 3), dtype=np.uint8)
 
 class TemporalMap:
-    def __init__(self):
-        self.CONTEXT_WINDOW = 60
-        self.RENDER_TMAPS = True
-        self.DISPLAY_CAMERA_VIEW = False
+    def __init__(self,
+                CONTEXT_WINDOW:int = 60,
+                RENDER_TMAPS: bool = False,
+                DISPLAY_CAMERA_VIEW: bool = False, 
+                VIDEO_CAP_INDEX: int = 0):
+        
+        self.CONTEXT_WINDOW = CONTEXT_WINDOW
+        self.RENDER_TMAPS = RENDER_TMAPS
+        self.DISPLAY_CAMERA_VIEW = DISPLAY_CAMERA_VIEW
         self.detector = None
         self.tmap = None
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(VIDEO_CAP_INDEX)
         self.fig = None
         self.axs = None
         
@@ -56,8 +62,6 @@ class TemporalMap:
         leftHand = BLANK_LINE
         rightHand = BLANK_LINE
 
-
-
         if detectionResult.hand_landmarks:
             if len(detectionResult.handedness) == 2:
                 leftOrRightIsProminent = detectionResult.handedness[0][0].display_name
@@ -79,9 +83,18 @@ class TemporalMap:
         
         timg = np.concatenate((leftHand, rightHand), axis=0)
 
-        self.tmap.append(timg)
+        # if not fromArray:
+        #     self.tmap.append(timg)
 
         return timg
+    
+    def calculateTmapFromArray(self, detectionResultArray):
+        tmap = []
+        for entry in detectionResultArray:
+            tmap.append(self.calculateTimg(entry))
+        
+        return tmap
+        
         
     def refreshTmap(self):
         plt.imshow(self.tmap)
@@ -94,10 +107,19 @@ class TemporalMap:
             raise SystemExit()
 
 
+
 if __name__ == '__main__':
     tmapMaker = TemporalMap()
 
     tmapMaker.setup()
+
+    sourceDir = 'captured_images'
+    labels = ['l2r', 'r2l']
+
+    # for label in labels:
+    #     for sequence in os.listDir(f'{sourceDir}/{label}'):
+    #         for image in os.listDir(f'{sourceDir}/{label}/{sequence}')
+    #             image = mp.Image.create_from_file(f'{sourceDir}/{label}/{sequence}/{image}')
 
     while 1:
         frame = tmapMaker.captureImage()
@@ -106,7 +128,7 @@ if __name__ == '__main__':
 
         handLandmarks = tmapMaker.calculateHandLandmarks(mpFrame)        
 
-        tmapMaker.calculateTimg(handLandmarks)
+        tmapMaker.tmap.append(tmapMaker.calculateTimg(handLandmarks))
 
         tmapMaker.refreshTmap()
 
