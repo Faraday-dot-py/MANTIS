@@ -18,7 +18,7 @@ if not cap.isOpened():
 
 # Set the total number of images to capture
 imagesPerSecond = 30
-numImages = 40
+numImages = 60
 stime = time.time()
 captureInterval = 1/imagesPerSecond  # in seconds
 

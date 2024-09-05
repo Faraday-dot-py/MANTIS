@@ -11,6 +11,7 @@ import cv2
 BLANK_IMAGE = np.zeros((60, 42, 3), dtype=np.uint8)
 BLANK_LINE = np.zeros((21, 3), dtype=np.uint8)
 
+
 class TemporalMap:
     def __init__(self):
         self.CONTEXT_WINDOW = 60
@@ -94,21 +95,20 @@ class TemporalMap:
             raise SystemExit()
 
 
-if __name__ == '__main__':
-    tmapMaker = TemporalMap()
+tmapMaker = TemporalMap()
 
-    tmapMaker.setup()
+tmapMaker.setup()
 
-    while 1:
-        frame = tmapMaker.captureImage()
+while 1:
+    frame = tmapMaker.captureImage()
 
-        mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
+    mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
 
-        handLandmarks = tmapMaker.calculateHandLandmarks(mpFrame)        
+    handLandmarks = tmapMaker.calculateHandLandmarks(mpFrame)        
 
-        tmapMaker.calculateTimg(handLandmarks)
+    tmapMaker.calculateTimg(handLandmarks)
 
-        tmapMaker.refreshTmap()
+    tmapMaker.refreshTmap()
 
 
-    plt.show()
+plt.show()
