@@ -113,14 +113,6 @@ if __name__ == '__main__':
 
     tmapMaker.setup()
 
-    sourceDir = 'captured_images'
-    labels = ['l2r', 'r2l']
-
-    # for label in labels:
-    #     for sequence in os.listDir(f'{sourceDir}/{label}'):
-    #         for image in os.listDir(f'{sourceDir}/{label}/{sequence}')
-    #             image = mp.Image.create_from_file(f'{sourceDir}/{label}/{sequence}/{image}')
-
     while 1:
         frame = tmapMaker.captureImage()
 

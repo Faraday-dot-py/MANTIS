@@ -4,3 +4,4 @@ output_images/*
 output_json/*
 hand_landmarker.task
 captured_images/*
+__pycache__/*
