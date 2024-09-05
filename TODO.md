@@ -1,17 +1,17 @@
 **First some housekeeping...**
 
-- [ ] Remove the need to create JSON files
+- [x] Remove the need to create JSON files
 
-- [ ] Write a function to combine the output images into a single image before saving
+- [x] Write a function to combine the output images into a single image before saving
 
-- [ ] Increase modularity
-  - [ ] File paths for all functions
+- [x] Increase modularity
+  - [x] File paths for all functions
 
 - [ ] If ``createTemporalMapFromDir`` is passed an output dir, save the tmap to that dir and return it, otherwise just return it
 
-- [ ] Rename "testImage" and similar nomenclature relics
+- [x] Rename "testImage" and similar nomenclature relics
 
-- [ ] Better automation for data collection
+- [x] Better automation for data collection
 
 
 **And after all that...**
