@@ -3,4 +3,3 @@ labeled_images/*
 output_json/*
 captured_images/*
 __pycache__/*
-output_images/*
