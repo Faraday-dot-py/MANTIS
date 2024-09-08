@@ -52,7 +52,7 @@ while True:
     if framesLeft > 0:
         captured_frames.append(frame)  # Store the frame in memory
         framesLeft -= 1
-        print(f'Captured frame {60-framesLeft}')
+        print(f'Captured frame {numImages-framesLeft}')
 
     if framesLeft == 0 and len(captured_frames) != 0:
         print('Saving sequence, please wait')
@@ -63,7 +63,8 @@ while True:
 
         captured_frames = []
         print('Sequence saved')
-        print('-'*20, end='\n\n')
+        print(f'You have {len(os.listdir(f"captured_images/{l2r_or_r2l}"))} tmaps')
+        print('-'*30, end='\n\n\n')
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

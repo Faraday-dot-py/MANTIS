@@ -97,11 +97,12 @@ class TemporalMap:
         
         
     def refreshTmap(self):
-        plt.imshow(self.tmap)
-        plt.draw()
-        plt.pause(0.0001)
-        plt.clf()
-
+        if self.RENDER_TMAPS:
+            plt.imshow(self.tmap)
+            plt.draw()
+            plt.pause(0.0001)
+            plt.clf()
+        
         if cv2.waitKey(1) & 0xFF == ord('q'):
             self.cap.release()
             raise SystemExit()
