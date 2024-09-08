@@ -1,114 +1,22 @@
-
-import mediapipe as mp
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
-import matplotlib.pyplot as plt
-from collections import deque
-import numpy as np
-import matplotlib.animation as animation
 import cv2
 
-BLANK_IMAGE = np.zeros((60, 42, 3), dtype=np.uint8)
-BLANK_LINE = np.zeros((21, 3), dtype=np.uint8)
+# Open the default camera
+cam = cv2.VideoCapture(0)
 
+# Get the default frame width and height
+frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-class TemporalMap:
-    def __init__(self):
-        self.CONTEXT_WINDOW = 60
-        self.RENDER_TMAPS = True
-        self.DISPLAY_CAMERA_VIEW = False
-        self.detector = None
-        self.tmap = None
-        self.cap = cv2.VideoCapture(0)
-        self.fig = None
-        self.axs = None
-        
-    def setup(self):
-        base_options = python.BaseOptions(model_asset_path='hand_landmarker.task')
-        options = vision.HandLandmarkerOptions(base_options=base_options,
-                                            num_hands=2)
-        self.detector = vision.HandLandmarker.create_from_options(options)
+while True:
+    ret, frame = cam.read()
 
-        self.tmap = deque(BLANK_IMAGE, maxlen=self.CONTEXT_WINDOW)
+    # Display the captured frame
+    cv2.imshow('Camera', frame)
 
-        if self.RENDER_TMAPS:
-            self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 5))
+    # Press 'q' to exit the loop
+    if cv2.waitKey(1) == ord('q'):
+        break
 
-    def captureImage(self):
-        ret, frame = self.cap.read()
-        
-        if not ret:
-            print("Error: Failed to capture image.")
-            raise Exception("Camera broken :/")
-        
-        if self.DISPLAY_CAMERA_VIEW: cv2.imshow("Captured Image", frame)
-
-        return frame
-
-    def convertImageToMediapipeImage(self, frame):
-        image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        return mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
-    
-    def calculateHandLandmarks(self, image):
-        return self.detector.detect(image)
-    
-    def calculateTimg(self, detectionResult):
-        leftHand = BLANK_LINE
-        rightHand = BLANK_LINE
-
-
-
-        if detectionResult.hand_landmarks:
-            if len(detectionResult.handedness) == 2:
-                leftOrRightIsProminent = detectionResult.handedness[0][0].display_name
-                if leftOrRightIsProminent == 'Left':
-                    leftHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[0]]
-                    rightHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[1]]
-                
-                else:
-                    leftHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[1]]
-                    rightHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[0]]
-
-            else:
-                if detectionResult.handedness[0][0].display_name == 'Left':
-                    leftHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[0]]
-
-                else:
-                    rightHand = [(int(landmark.x*255), int(landmark.y*255),  int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[0]]
-
-        
-        timg = np.concatenate((leftHand, rightHand), axis=0)
-
-        self.tmap.append(timg)
-
-        return timg
-        
-    def refreshTmap(self):
-        plt.imshow(self.tmap)
-        plt.draw()
-        plt.pause(0.0001)
-        plt.clf()
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            self.cap.release()
-            raise SystemExit()
-
-
-tmapMaker = TemporalMap()
-
-tmapMaker.setup()
-
-while 1:
-    frame = tmapMaker.captureImage()
-
-    mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
-
-    handLandmarks = tmapMaker.calculateHandLandmarks(mpFrame)        
-
-    tmapMaker.calculateTimg(handLandmarks)
-
-    tmapMaker.refreshTmap()
-
-
-plt.show()
+# Release the capture and writer objects
+cam.release()
+cv2.destroyAllWindows()
