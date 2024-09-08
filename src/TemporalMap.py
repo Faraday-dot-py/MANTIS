@@ -31,7 +31,7 @@ class TemporalMap:
         self.axs = None
 
     def setup(self):
-        base_options = python.BaseOptions(model_asset_path="../models/hand_landmarker.task")
+        base_options = python.BaseOptions(model_asset_path="models/hand_landmarker.task")
         options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=2)
         self.detector = vision.HandLandmarker.create_from_options(options)
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
 
 # # while 1:
 # jacueblolsHand = mp.Image.create_from_file(
-#     f"../captured_images/r2l/capture_0/image_11.jpg"
+#     f"captured_images/r2l/capture_0/image_11.jpg"
 # )
 
 # # mpFrame = tmapMaker.convertImageToMediapipeImage(frame)

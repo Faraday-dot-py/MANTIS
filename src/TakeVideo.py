@@ -6,8 +6,8 @@ import keyboard
 # Create a directory to save the images
 nameOfClassToCapture = "r2l"
 
-if not os.path.exists(f"../captured_images/{nameOfClassToCapture}"):
-    os.makedirs(f"../captured_images/{nameOfClassToCapture}")
+if not os.path.exists(f"captured_images/{nameOfClassToCapture}"):
+    os.makedirs(f"captured_images/{nameOfClassToCapture}")
 
 # Initialize the webcam (0 is the default camera)
 cap = cv2.VideoCapture(0)
@@ -43,7 +43,7 @@ while True:
         wasPressed = True
         framesLeft = numImages
         captured_frames = []  # Reset captured frames for new sequence
-        captureSequenceFolder = f'../captured_images/{nameOfClassToCapture}/capture_{len(os.listdir(f"../captured_images/{nameOfClassToCapture}"))}'
+        captureSequenceFolder = f'captured_images/{nameOfClassToCapture}/capture_{len(os.listdir(f"captured_images/{nameOfClassToCapture}"))}'
         os.makedirs(captureSequenceFolder)
 
     elif not spacePressed:
@@ -58,13 +58,13 @@ while True:
         print("Saving sequence, please wait")
         # Save all frames after capturing is complete
         for i, saved_frame in enumerate(captured_frames):
-            filename = f"../{captureSequenceFolder}/image_{i + 1:02d}.jpg"
+            filename = f"{captureSequenceFolder}/image_{i + 1:02d}.jpg"
             cv2.imwrite(filename, saved_frame)
 
         captured_frames = []
         print("Sequence saved")
         print(
-            f'You have {len(os.listdir(f"../captured_images/{nameOfClassToCapture}"))} tmaps'
+            f'You have {len(os.listdir(f"captured_images/{nameOfClassToCapture}"))} tmaps'
         )
         print("-" * 30, end="\n\n\n")
 
