@@ -19,11 +19,13 @@ class TemporalMap:
         RENDER_TMAPS: bool = False,
         DISPLAY_CAMERA_VIEW: bool = False,
         VIDEO_CAP_INDEX: int = 0,
+        MODEL_PATH: str = r'C:\Users\awebb\Documents\Programming\Python\Unnamed\models\hand_landmarker.task'
     ):
 
         self.CONTEXT_WINDOW = CONTEXT_WINDOW
         self.RENDER_TMAPS = RENDER_TMAPS
         self.DISPLAY_CAMERA_VIEW = DISPLAY_CAMERA_VIEW
+        self.MODEL_PATH = MODEL_PATH
         self.detector = None
         self.tmap = None
         self.cap = cv2.VideoCapture(VIDEO_CAP_INDEX)
@@ -31,7 +33,7 @@ class TemporalMap:
         self.axs = None
 
     def setup(self):
-        base_options = python.BaseOptions(model_asset_path="../models/hand_landmarker.task")
+        base_options = python.BaseOptions(model_asset_path=self.MODEL_PATH)
         options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=2)
         self.detector = vision.HandLandmarker.create_from_options(options)
 
