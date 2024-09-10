@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
 # # while 1:
 # jacueblolsHand = mp.Image.create_from_file(
-#     f"../captured_images/r2l/capture_0/image_11.jpg"
+#     f"captured_images/r2l/capture_0/image_11.jpg"
 # )
 
 # # mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
