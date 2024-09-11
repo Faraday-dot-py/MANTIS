@@ -16,11 +16,19 @@
 
 **And after all that...**
 
-- [ ] Preliminary test with two image classes (r2l and l2r)
-  - [ ] Collect l2r and r2l data (20 samples of each)
-  - [ ] Generate tmaps for each
-  - [ ] Label images
-  - [ ] Train image classifier
-  - [ ] ✨Testing✨
+- [x] Preliminary test with two image classes (r2l and l2r)
+  - [x] Collect l2r and r2l data (20 samples of each)
+  - [x] Generate tmaps for each
+  - [x] Label images
+  - [x] Train image classifier
+  - [x] ✨Testing✨
 
 If testing goes well, we can reach out to ASL foundations for data collection
+
+Testing went well! Basic model with 2 classes (r2l and l2r) works
+r2l: slow hand movement from right to left
+l2r: slow hand movement from left to right
+
+- [ ] Optimization
+ - [ ] Run camera and processing in two different threads
+ - [ ] Look into making the model smaller

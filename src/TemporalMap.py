@@ -19,7 +19,7 @@ class TemporalMap:
         RENDER_TMAPS: bool = False,
         DISPLAY_CAMERA_VIEW: bool = False,
         VIDEO_CAP_INDEX: int = 0,
-        MODEL_PATH: str = r'C:\Users\awebb\Documents\Programming\Python\Unnamed\models\hand_landmarker.task'
+        MODEL_PATH: str = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\models\hand_landmarker.task'
     ):
 
         self.CONTEXT_WINDOW = CONTEXT_WINDOW
@@ -65,7 +65,7 @@ class TemporalMap:
         return handlms
 
     def calculateTimgPixelValues(self, detectionResult, handIndex: int):
-        return [(int(landmark.x * 255), int(landmark.y * 255), int(((landmark.z + 1) / 2) * 255)) for landmark in detectionResult.hand_landmarks[handIndex]]
+        return [(landmark.x, landmark.y, (landmark.z + 1)/2) for landmark in detectionResult.hand_landmarks[handIndex]]
 
     def calculateTimg(self, detectionResult):
         leftHand = BLANK_LINE
