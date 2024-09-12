@@ -7,15 +7,18 @@ import numpy as np
 import matplotlib.animation as animation
 import cv2
 import os
+import mediapipe as mp
 
-BLANK_IMAGE = np.zeros((60, 42, 3), dtype=np.uint8)
-BLANK_LINE = np.zeros((21, 3), dtype=np.uint8)
-
+BLANK_HAND = np.zeros((21, 3), dtype=np.uint8)
+BLANK_FACE = np.zeros((468, 3), dtype=np.uint8)
+BLANK_POSE = np.zeros((33, 3), dtype=np.uint8)
+BLANK_IMAGE = np.concatenate((BLANK_FACE, BLANK_POSE, BLANK_HAND, BLANK_HAND), axis=0)
+mpHolistic = mp.solutions.holistic
 
 class TemporalMap:
     def __init__(
         self,
-        CONTEXT_WINDOW: int = 60,
+        CONTEXT_WINDOW: int = 120,
         RENDER_TMAPS: bool = False,
         DISPLAY_CAMERA_VIEW: bool = False,
         VIDEO_CAP_INDEX: int = 0,
@@ -33,11 +36,10 @@ class TemporalMap:
         self.axs = None
 
     def setup(self):
-        base_options = python.BaseOptions(model_asset_path=self.MODEL_PATH)
-        options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=2)
-        self.detector = vision.HandLandmarker.create_from_options(options)
+        self.detector = mpHolistic.Holistic()
 
-        self.tmap = deque(BLANK_IMAGE, maxlen=self.CONTEXT_WINDOW)
+        self.tmap = deque([BLANK_IMAGE.copy() for _ in range(self.CONTEXT_WINDOW)], maxlen=self.CONTEXT_WINDOW)
+        print(np.array(list(self.tmap)).shape)
 
         if self.RENDER_TMAPS:
             self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 5))
@@ -59,17 +61,57 @@ class TemporalMap:
 
         return mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
-    def calculateHandLandmarks(self, image):
-        handlms = self.detector.detect(image)
-        # print(handlms)
-        return handlms
-
     def calculateTimgPixelValues(self, detectionResult, handIndex: int):
         return [(landmark.x, landmark.y, (landmark.z + 1)/2) for landmark in detectionResult.hand_landmarks[handIndex]]
+    
+    def calculateTimg(self, detectionResults):
+    #     return np.concatenate((
+    #         (detectionResults['face'] if detectionResults['face'] != None else BLANK_FACE),
+    #         (detectionResults['pose'] if detectionResults['pose'] != None else BLANK_POSE), 
+    #         (detectionResults['left'] if detectionResults['left'] != None else BLANK_HAND), 
+    #         (detectionResults['right'] if detectionResults['right'] != None else BLANK_HAND)
+    #         ))
+        return np.concatenate((detectionResults['face'], detectionResults['pose'], detectionResults['left'], detectionResults['right']))
+    
+    def calculateLandmarks(self, frame):
+        # Read frames from the webcam
+        ret, frame = self.cap.read()
+        if not ret:
+            print("frames not found")
+            raise SystemExit()
 
-    def calculateTimg(self, detectionResult):
-        leftHand = BLANK_LINE
-        rightHand = BLANK_LINE
+        # Convert the BGR image to RGB
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Process the frame using the Holistic model
+        results = self.detector.process(rgb_frame)
+
+        landmarks = {
+            'face': BLANK_FACE,
+            'pose': BLANK_POSE,
+            'left': BLANK_HAND,
+            'right': BLANK_HAND
+        }
+        # print('\n-----')
+        if results.pose_landmarks:
+            landmarks['pose'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.pose_landmarks.landmark]
+            # print(np.array(landmarks['pose']).shape)
+        if results.face_landmarks:
+            landmarks['face'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.face_landmarks.landmark]
+            # print(np.array(landmarks['face']).shape)
+        if results.left_hand_landmarks:
+            landmarks['left'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.left_hand_landmarks.landmark]
+            # print(np.array(landmarks['left']).shape)
+        if results.right_hand_landmarks:
+            landmarks['right'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.right_hand_landmarks.landmark]
+            # print(np.array(landmarks['right']).shape)
+        print()
+
+        return landmarks
+
+    def calculateHandTimg(self, detectionResult):
+        leftHand = BLANK_HAND
+        rightHand = BLANK_HAND
 
         if detectionResult.hand_landmarks:
             leftOrRightIsProminent = detectionResult.handedness[0][0].display_name
@@ -123,9 +165,16 @@ if __name__ == '__main__':
 
         mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
 
-        handLandmarks = tmapMaker.calculateHandLandmarks(mpFrame)
+        handLandmarks = tmapMaker.calculateLandmarks(mpFrame)
+        
+        timg = tmapMaker.calculateTimg(handLandmarks)
 
-        tmapMaker.tmap.append(tmapMaker.calculateTimg(handLandmarks))
+        # print(np.array(tmapMaker.tmap).shape)
+        # print(np.array(timg).shape)
+        tmapMaker.tmap.append(timg)
+        # # tmapMaker.tmap = timg
+        # # print(np.array(timg).shape)
+        # np.savetxt('out.txt', np.array(tmapMaker.tmap))
 
         tmapMaker.refreshTmap()
 
