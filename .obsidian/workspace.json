@@ -1,0 +1,175 @@
+{
+  "main": {
+    "id": "c83103fe5d3b0bee",
+    "type": "split",
+    "children": [
+      {
+        "id": "e6d865e70d39387b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "531ee0ce44653168",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "project_documentation/Research Docs/main.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1095dd9d05a62f6a",
+    "type": "split",
+    "children": [
+      {
+        "id": "3dc55144747a61b3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8d8bf98540593291",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "ee2cb21b10193a68",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "74031acd534c8302",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e8e8df0c4118bf07",
+    "type": "split",
+    "children": [
+      {
+        "id": "e651f467e3b95948",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "40a97a0485d37a33",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "project_documentation/Research Docs/main.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "2b8d891928fb6dec",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "project_documentation/Research Docs/main.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "f48a0324d3b873b3",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "08991ca43c9ff01b",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "project_documentation/Research Docs/main.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "531ee0ce44653168",
+  "lastOpenFiles": [
+    "out.txt",
+    "testing/ASL_Videos/zip.mp4",
+    "testing/ASL_Videos/you.mp4",
+    "testing/ASL_Videos/yes.mp4",
+    "testing/ASL_Videos/yellow.mp4",
+    "testing/ASL_Videos/write.mp4",
+    "testing/ASL_Videos/wrist.mp4",
+    "testing/ASL_Videos/wrap.mp4",
+    "testing/ASL_Videos/worm.mp4",
+    "testing/ASL_Videos/with.mp4",
+    "testing/ASL_Videos/wish.mp4",
+    "training_data/unprocessed_training_data/hello/capture_8/image_30.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_29.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_28.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_27.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_26.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_25.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_24.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_23.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_22.jpg",
+    "training_data/unprocessed_training_data/hello/capture_8/image_21.jpg",
+    "project_documentation/notes_and_cool_things.md",
+    "project_documentation/Research Docs/main.md"
+  ]
+}
