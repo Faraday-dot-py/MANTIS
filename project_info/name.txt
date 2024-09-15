@@ -1,3 +1,2 @@
-PALM
-Processing ASL Leveraging ML
-* To be changed
+MANTIS
+Multi-dimensional Advanced Neural Temporal Interpretation System
