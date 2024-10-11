@@ -5,30 +5,65 @@ import mediapipe as mp
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+from PIL import Image
+from tqdm import tqdm
 
 
-tmapMaker = TemporalMap()
-
+# Initialize the TemporalMap object and Mediapipe Hand solutions
+print("Loading tmap maker class")
+tmapMaker = TemporalMap(CONTEXT_WINDOW=323)
+print("Setting up tmap maker class")
 tmapMaker.setup()
+print("Done")
 
-sourceDir = "captured_images"  # The directory of the images you want to make tmaps of
-labels = [
-    "l2r",
-    "r2l",
-]  # The labels in sourceDir that we want to create tmaps from
+sourceDir = r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data"
+outputDir = r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data" 
+labels = os.listdir(sourceDir)  # The labels in sourceDir
 
+# Process each label
 for label in labels:
-    saveDir = f"output_images/{label}"
+    saveDir = f"{outputDir}/{label}"
     if not os.path.exists(saveDir):
         os.makedirs(saveDir)
 
-    for sequence in os.listdir(f"{sourceDir}/{label}"):
-
+    for video_file in os.listdir(f"{sourceDir}/{label}"):
+        video_path = f"{sourceDir}/{label}/{video_file}"
+        cap = cv2.VideoCapture(video_path)  # Open the video file
         handLandmarkArray = []
-        for image in os.listdir(f"{sourceDir}/{label}/{sequence}"):
-            image = mp.Image.create_from_file(f"{sourceDir}/{label}/{sequence}/{image}")
 
-            handLandmarkArray.append(tmapMaker.calculateHandLandmarks(image))
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        with tqdm(total=total_frames, desc=f"Processing {video_file}", unit="frame") as pbar:
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break  # Exit the loop if there are no frames left to read
 
-        tmap = np.array(tmapMaker.calculateTmapFromArray(handLandmarkArray))
-        cv2.imwrite(f"{saveDir}/sample_{len(os.listdir(saveDir))}.jpg", tmap)
+                # Convert the frame to RGB (as Mediapipe requires RGB images)
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                landmarks = tmapMaker.calculateLandmarks(frame_rgb)
+                timg = tmapMaker.calculateTimg(landmarks)
+                tmapMaker.addTimgToBuffer(timg)
+
+                pbar.update(1)
+
+    # Release the video capture object
+    cap.release()
+
+    # Calculate the Tmap from the hand landmarks array
+    tmap = np.array(tmapMaker.tmap)
+
+    image_array = tmap.astype(np.uint8)  # Convert to unsigned 8-bit integer
+
+    # Create an image object from the array
+    image = Image.fromarray(image_array)
+
+    # Display the image
+    plt.imshow(image)
+    plt.axis('off')
+    plt.show()
+
+    # Save the image as a png file
+    image.save(f"{saveDir}/sample_{len(os.listdir(saveDir))}.png")
+
+
