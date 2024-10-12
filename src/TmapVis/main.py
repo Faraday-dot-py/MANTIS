@@ -21,7 +21,6 @@ def horizontal_transform(points, distance):
 
 # Vertical transformation
 def vertical_transform(points, distance):
-    # FILL ME IN
     return [[x, y + distance] for x, y in points]
 
 # Rotational transformation
@@ -159,19 +158,19 @@ def create_multiple_hand_animations(image_arrays, interval=1/30):
 loadedTmapWithoutBlue = np.array([[(landmark[0], landmark[1]) for landmark in frame] for frame in loadedTmapArray])
 
 # Apply horizontal transformation to each frame of the tmap
-# horizontalTmap = np.array([horizontal_transform(frame, 50) for frame in loadedTmap])  # Move right by 50 units
+# horizontalTmap = np.array([horizontal_transform(frame, 50) for frame in loadedTmapWithoutBlue])  # Move right by 50 units
 
 # # Apply vertical transformation to each frame of the tmap
-# verticalTmap = np.array([vertical_transform(frame, 50) for frame in loadedTmap])  # Move up by 50 units
+# verticalTmap = np.array([vertical_transform(frame, 50) for frame in loadedTmapWithoutBlue])  # Move up by 50 units
 
 # # Apply rotational transformation to each frame of the tmap
-# rotatedTmap = np.array([rotate_points(frame, 45, 9) for frame in loadedTmap])  # Rotate by 45 degrees around point 0
+rotatedTmap = np.array([rotate_points(frame, 45, 9) for frame in loadedTmapWithoutBlue])  # Rotate by 45 degrees around point 0
 
 # # Apply scaling transformation to each frame of the tmap
-# scaledTmap = np.array([scale_points(frame, 0.5) for frame in loadedTmap])  # Scale down by a factor of 0.5
+# scaledTmap = np.array([scale_points(frame, 0.5) for frame in loadedTmapWithoutBlue])  # Scale down by a factor of 0.5
 
 # # Apply shearing transformation to each frame of the tmap
-# shearedTmap = np.array([shear_points(frame, 0.1, 0.1) for frame in loadedTmap])  # Shear by 0.5 in both directions
+# shearedTmap = np.array([shear_points(frame, 0.1, 0.1) for frame in loadedTmapWithoutBlue])  # Shear by 0.5 in both directions
 
 xRange = range(-10, 10)
 yRange = range(-10, 10)
@@ -181,71 +180,67 @@ shearRange = [(x, y) for x in np.linspace(-0.2, 0.2, 10) for y in np.linspace(-0
 
 generatedTmaps = []
 
+# generate and save every possible tmap with the ranges provided
 print("Generating Tmaps...")
 print("Horizontal Transformations")
-# generate and save every possible tmap with the ranges provided
 for x in xRange:
     horizontalTmap = np.array([horizontal_transform(frame, x) for frame in loadedTmapWithoutBlue])
     generatedTmaps.append(horizontalTmap)
 
-print("Vertical Transformations")
-for y in yRange:
-    verticalTmap = np.array([vertical_transform(frame, y) for frame in loadedTmapWithoutBlue])
-    generatedTmaps.append(verticalTmap)
+# print("Vertical Transformations")
+# for y in yRange:
+#     verticalTmap = np.array([vertical_transform(frame, y) for frame in loadedTmapWithoutBlue])
+#     generatedTmaps.append(verticalTmap)
 
-print("Rotational Transformations")
-for angle in rotationRange:
-    rotatedTmap = np.array([rotate_points(frame, angle, 9) for frame in loadedTmapWithoutBlue])
-    generatedTmaps.append(rotatedTmap)
+# print("Rotational Transformations")
+# for angle in rotationRange:
+#     rotatedTmap = np.array([rotate_points(frame, angle, 9) for frame in loadedTmapWithoutBlue])
+#     generatedTmaps.append(rotatedTmap)
 
-print("Scaling Transformations")
-for scale in scaleRange:
-    scaledTmap = np.array([scale_points(frame, scale) for frame in loadedTmapWithoutBlue])
-    generatedTmaps.append(scaledTmap)
+# print("Scaling Transformations")
+# for scale in scaleRange:
+#     scaledTmap = np.array([scale_points(frame, scale) for frame in loadedTmapWithoutBlue])
+#     generatedTmaps.append(scaledTmap)
 
-print("Shearing Transformations")
-for shear in shearRange:
-    shearedTmap = np.array([shear_points(frame, shear[0], shear[1]) for frame in loadedTmapWithoutBlue])
-    generatedTmaps.append(shearedTmap)
+# print("Shearing Transformations")
+# for shear in shearRange:
+#     shearedTmap = np.array([shear_points(frame, shear[0], shear[1]) for frame in loadedTmapWithoutBlue])
+#     generatedTmaps.append(shearedTmap)
 
-def restore_blue_channel(generated_tmap, original_tmap):
-    """
-    Restore the blue color channel from the original tmap back into the generated tmap.
-
-    Parameters:
-    - generated_tmap: A numpy array representing the generated image with the blue channel removed.
-    - original_tmap: A numpy array representing the original image.
-
-    Returns:
-    - Modified generated tmap with the blue channel restored from the original tmap.
-    """
-    # Copy the blue channel (3rd channel, index 2) from the original tmap to the generated tmap
-    restored_tmap = np.copy(generated_tmap)
-    blue_channel = original_tmap[:, :, 2]
-    restored_tmap = np.dstack((restored_tmap, blue_channel))
-    return restored_tmap
-
-def restore_blue_channel(generated_tmap, original_tmap):
+def restore_blue_channel(generated_tmap, original_tmap, display=False):
     
     # Copy the generated tmap to avoid modifying the original data
-    restored_tmap = np.copy(generated_tmap)
+    old_tmap = np.copy(generated_tmap)
     
     # Restore the blue channel (channel index 2 in RGB)
     new_channel = original_tmap[:, :, 2]
-    restored_tmap = np.dstack((restored_tmap, new_channel))
-    
+    restored_tmap = np.dstack((old_tmap, new_channel))
+
+    if display:
+        # Plot the old tmap, the new channel, and teh restored tmap
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        axes[0].imshow(np.dstack((old_tmap, np.zeros_like(old_tmap[:, :, 0]))))
+        axes[0].set_title("Original Tmap")
+        axes[1].imshow(new_channel, cmap='gray')
+        axes[1].set_title("New Channel")
+        axes[2].imshow(restored_tmap)
+        axes[2].set_title("Restored Tmap")
+        plt.show()
+
     return restored_tmap
 
 
-# Save all the tmaps to a folder with a progress bar
-total_frames = sum(len(tmap) for tmap in generatedTmaps)
-with tqdm(total=total_frames, desc="Saving Tmaps") as pbar:
-    for i, tmap in enumerate(generatedTmaps):
-        fullTmap = restore_blue_channel(tmap, loadedTmapArray)
-        fullTmapImage = Image.fromarray(fullTmap.astype('uint8'))
-        fullTmapImage.save(fr"C:\Users\awebb\Documents\Programming\Python\MANTIS\src\TmapVis\generatedTmaps\generated_tmap_{i}.png")
+create_multiple_hand_animations([loadedTmapArray, rotatedTmap])
 
-        pbar.update(len(loadedTmapWithoutBlue))
+# Save all the tmaps to a folder with a progress bar
+# total_frames = sum(len(tmap) for tmap in generatedTmaps)
+# with tqdm(total=total_frames, desc="Saving Tmaps") as pbar:
+#     for i, tmap in enumerate(generatedTmaps):
+#         fullTmap = restore_blue_channel(tmap, loadedTmapArray)
+#         fullTmapImage = Image.fromarray(fullTmap.astype('uint8'))
+#         fullTmapImage.save(fr"C:\Users\awebb\Documents\Programming\Python\MANTIS\src\TmapVis\generatedTmaps\generated_tmap_{i}.png")
+
+#         pbar.update(len(loadedTmapWithoutBlue))
 
 # tmaps = np.array([
 #     loadedTmap,
