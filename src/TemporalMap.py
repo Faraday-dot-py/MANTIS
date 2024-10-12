@@ -8,32 +8,42 @@ import matplotlib.animation as animation
 import cv2
 import os
 import mediapipe as mp
+import math
+from concurrent.futures import ThreadPoolExecutor
+import threading
+import tensorflow as tf
 
 BLANK_HAND = np.zeros((21, 3), dtype=np.uint8)
 BLANK_FACE = np.zeros((468, 3), dtype=np.uint8)
 BLANK_POSE = np.zeros((33, 3), dtype=np.uint8)
-BLANK_IMAGE = np.concatenate((BLANK_FACE, BLANK_POSE, BLANK_HAND, BLANK_HAND), axis=0)
+BLANK_IMAGE = np.concatenate((
+    # BLANK_FACE,
+    # BLANK_POSE, 
+    BLANK_HAND, 
+    BLANK_HAND
+), axis=0)
+
 mpHolistic = mp.solutions.holistic
+
+UPPER_Z_LIMIT = 5
+LOWER_Z_LIMIT = -5
 
 class TemporalMap:
     def __init__(
         self,
         CONTEXT_WINDOW: int = 120,
         RENDER_TMAPS: bool = False,
-        DISPLAY_CAMERA_VIEW: bool = False,
-        VIDEO_CAP_INDEX: int = 0,
         MODEL_PATH: str = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\models\hand_landmarker.task'
     ):
 
         self.CONTEXT_WINDOW = CONTEXT_WINDOW
         self.RENDER_TMAPS = RENDER_TMAPS
-        self.DISPLAY_CAMERA_VIEW = DISPLAY_CAMERA_VIEW
         self.MODEL_PATH = MODEL_PATH
         self.detector = None
         self.tmap = None
-        self.cap = cv2.VideoCapture(VIDEO_CAP_INDEX)
         self.fig = None
         self.axs = None
+
 
     def setup(self):
         self.detector = mpHolistic.Holistic()
@@ -41,100 +51,79 @@ class TemporalMap:
         self.tmap = deque([BLANK_IMAGE.copy() for _ in range(self.CONTEXT_WINDOW)], maxlen=self.CONTEXT_WINDOW)
         print(np.array(list(self.tmap)).shape)
 
-        if self.RENDER_TMAPS:
-            self.fig, self.axs = plt.subplots(1, 1, figsize=(10, 5))
-
-    def captureImage(self):
-        ret, frame = self.cap.read()
-
-        if not ret:
-            print("Error: Failed to capture image.")
-            raise Exception("Camera broken :/")
-
-        if self.DISPLAY_CAMERA_VIEW:
-            cv2.imshow("Captured Image", frame)
-
-        return frame
 
     def convertImageToMediapipeImage(self, frame):
         image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
         return mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
-    def calculateTimgPixelValues(self, detectionResult, handIndex: int):
-        return [(landmark.x, landmark.y, (landmark.z + 1)/2) for landmark in detectionResult.hand_landmarks[handIndex]]
-    
     def calculateTimg(self, detectionResults):
-    #     return np.concatenate((
-    #         (detectionResults['face'] if detectionResults['face'] != None else BLANK_FACE),
-    #         (detectionResults['pose'] if detectionResults['pose'] != None else BLANK_POSE), 
-    #         (detectionResults['left'] if detectionResults['left'] != None else BLANK_HAND), 
-    #         (detectionResults['right'] if detectionResults['right'] != None else BLANK_HAND)
-    #         ))
-        return np.concatenate((detectionResults['face'], detectionResults['pose'], detectionResults['left'], detectionResults['right']))
+        return np.concatenate((
+            # detectionResults['face'],
+            # detectionResults['pose'],
+            detectionResults['left'],
+            detectionResults['right']
+        ))
     
-    def calculateLandmarks(self, frame):
-        # Read frames from the webcam
-        ret, frame = self.cap.read()
-        if not ret:
-            print("frames not found")
-            raise SystemExit()
-
-        # Convert the BGR image to RGB
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
+    
+    def sigmoid(self, x, k=1):
+        return 1/(1 + np.exp(-x*k))
+    
+    def upperLowerLimit(self, x, min, max):
+        return min if x < min else max if x > max else x
+    
+    def calculateLandmarks(self, frame, normalized=True):
         # Process the frame using the Holistic model
-        results = self.detector.process(rgb_frame)
+        results = self.detector.process(frame)
+
+        # scalingFactor = 1 if normalized else 255
+        # scalingFactor = 255
 
         landmarks = {
-            'face': BLANK_FACE,
-            'pose': BLANK_POSE,
+            # 'face': BLANK_FACE,
+            # 'pose': BLANK_POSE,
             'left': BLANK_HAND,
             'right': BLANK_HAND
         }
-        # print('\n-----')
-        if results.pose_landmarks:
-            landmarks['pose'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.pose_landmarks.landmark]
-            # print(np.array(landmarks['pose']).shape)
-        if results.face_landmarks:
-            landmarks['face'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.face_landmarks.landmark]
-            # print(np.array(landmarks['face']).shape)
+        
+        # if results.pose_landmarks:
+        #     landmarks['pose']  = [
+        #         (
+        #             self.scaledSigmoid(landmark.x) * scalingFactor,
+        #             self.scaledSigmoid(landmark.y) * scalingFactor, 
+        #             self.sigmoid(landmark.z) * scalingFactor
+        #         ) 
+        #         for landmark in results.pose_landmarks.landmark]
+
+        # if results.face_landmarks:
+        #     landmarks['face']  = [
+        #         (
+        #             self.scaledSigmoid(landmark.x) * scalingFactor,
+        #             self.scaledSigmoid(landmark.y) * scalingFactor, 
+        #             self.sigmoid(landmark.z) * scalingFactor
+        #         ) 
+        #         for landmark in results.face_landmarks.landmark]
+            
         if results.left_hand_landmarks:
-            landmarks['left'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.left_hand_landmarks.landmark]
-            # print(np.array(landmarks['left']).shape)
-        if results.right_hand_landmarks:
-            landmarks['right'] = [(landmark.x, landmark.y, landmark.z) for landmark in results.right_hand_landmarks.landmark]
-            # print(np.array(landmarks['right']).shape)
-        print()
+            landmarks['left']  = [
+                (
+                    self.upperLowerLimit(landmark.x, 0, 1) * 255,
+                    self.upperLowerLimit(landmark.y, 0, 1) * 255,
+                    self.sigmoid(landmark.z, 1) * 255
+                ) 
+                for landmark in results.left_hand_landmarks.landmark]
+
+        # if results.right_hand_landmarks:
+        #     landmarks['right'] = [
+        #         (
+        #             self.scaledSigmoid(landmark.x),
+        #             self.scaledSigmoid(landmark.y),
+        #             self.scaledSigmoid(landmark.z)
+        #         ) 
+        #         for landmark in results.right_hand_landmarks.landmark]
 
         return landmarks
-
-    def calculateHandTimg(self, detectionResult):
-        leftHand = BLANK_HAND
-        rightHand = BLANK_HAND
-
-        if detectionResult.hand_landmarks:
-            leftOrRightIsProminent = detectionResult.handedness[0][0].display_name
-            
-            leftHandIndex = 0 if (leftOrRightIsProminent == "Left") else 1
-            rightHandIndex = int(not leftHandIndex)
-            
-            if len(detectionResult.handedness) == 2:
-                leftHand = self.calculateTimgPixelValues(detectionResult, leftHandIndex)
-                rightHand = self.calculateTimgPixelValues(detectionResult, rightHandIndex)
-            
-            else:
-                if leftHandIndex == 0:
-                    leftHand = self.calculateTimgPixelValues(detectionResult, leftHandIndex)
-                else:
-                    rightHand = self.calculateTimgPixelValues(detectionResult, rightHandIndex)
-
-
-        timg = np.concatenate((leftHand, rightHand), axis=0)
-        # if not fromArray:
-        #     self.tmap.append(timg)
-        
-        return timg
+    
 
     def calculateTmapFromArray(self, detectionResultArray):
         tmap = []
@@ -142,56 +131,81 @@ class TemporalMap:
             tmap.append(self.calculateTimg(entry))
 
         return tmap
+    
+    def addTimgToBuffer(self, timg):
+        self.tmap.append(timg)
 
-    def refreshTmap(self):
-        if self.RENDER_TMAPS:
-            plt.imshow(self.tmap)
-            plt.draw()
-            plt.pause(0.0001)
-            plt.clf()
 
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            self.cap.release()
-            raise SystemExit()
 
+class_names = ['l2r', 'r2l']
+
+def capture_frame(cap):
+    ret, frame = cap.read()
+    if not ret:
+        return None
+    return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+def process_landmarks(tmapMaker, frame):
+    handLandmarks = tmapMaker.calculateLandmarks(frame)
+    timg = tmapMaker.calculateTimg(handLandmarks)
+    tmapMaker.addTimgToBuffer(timg)
+    return tmapMaker.tmap
+
+def makePrediction(tmapMaker):
+    predictions = tmapMaker.model.predict(tmapMaker.tmap, verbose=0)
+    probabilities = tf.nn.softmax(predictions[0])
+    predictedClass = class_names[np.argmax(probabilities)]
+    return predictedClass
 
 if __name__ == '__main__':
-    tmapMaker = TemporalMap(RENDER_TMAPS=True, DISPLAY_CAMERA_VIEW=True)
-
+    tmapMaker = TemporalMap(RENDER_TMAPS=True)
     tmapMaker.setup()
 
-    while 1:
-        frame = tmapMaker.captureImage()
+    cap = cv2.VideoCapture(0)
+    plt.ion()  # Turn on interactive mode for matplotlib
+    figure, ax = plt.subplots()  # Create figure and axes for plotting
 
-        mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
+    # Use a thread pool for parallel execution
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futureFrame = None
+        futureLandmarks = None
+        futurePrediciton = None
 
-        handLandmarks = tmapMaker.calculateLandmarks(mpFrame)
-        
-        timg = tmapMaker.calculateTimg(handLandmarks)
+        while True:
+            # Submit video capture to a thread
+            futureFrame = executor.submit(capture_frame, cap)
+            
+            if futureLandmarks:
+                # Update the plot with the processed landmarks
+                tmap = futureLandmarks.result()
+                ax.cla()
+                ax.imshow(tmap)
+                ax.set_xlabel('Hand Index')
+                ax.set_ylabel('Age')
+                plt.pause(0.01)
 
-        # print(np.array(tmapMaker.tmap).shape)
-        # print(np.array(timg).shape)
-        tmapMaker.tmap.append(timg)
-        # # tmapMaker.tmap = timg
-        # # print(np.array(timg).shape)
-        # np.savetxt('out.txt', np.array(tmapMaker.tmap))
+            # Wait for the captured frame
+            frame = futureFrame.result()
+            if frame is None:
+                print("Failed to capture image, exiting.")
+                break
 
-        tmapMaker.refreshTmap()
+            # Submit landmark processing to another thread
+            futureLandmarks = executor.submit(process_landmarks, tmapMaker, frame)
 
+            futurePrediction = executor.submit(makePrediction, tmapMaker)
 
-    plt.show()
+            if futurePrediciton:
+                print(futurePrediciton.result())
 
-# tmapMaker = TemporalMap()
+            cv2.imshow("Captured Image", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
-# tmapMaker.setup()
+            # Exit the loop if 'q' is pressed
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                break
 
-# # while 1:
-# jacueblolsHand = mp.Image.create_from_file(
-#     f"captured_images/r2l/capture_0/image_11.jpg"
-# )
-
-# # mpFrame = tmapMaker.convertImageToMediapipeImage(frame)
-
-# handLandmarks = tmapMaker.calculateHandLandmarks(jacueblolsHand)
-
-# tmapMaker.calculateTimg(handLandmarks)
+    # Release the video capture and close all OpenCV windows
+    cap.release()
+    cv2.destroyAllWindows()
+    plt.ioff()  # Turn off interactive mode
+    plt.show()  # Ensure any remaining plots are displayed
