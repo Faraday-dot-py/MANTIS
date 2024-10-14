@@ -11,9 +11,11 @@
             "id": "b9b034cdab97cded",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg"
+                "file": "documentation/project_documentation/Research Docs/main.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
@@ -83,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
+                "file": "documentation/project_documentation/Research Docs/main.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
+                "file": "documentation/project_documentation/Research Docs/main.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -123,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg"
+                "file": "documentation/project_documentation/Research Docs/main.md"
               }
             }
           }
@@ -146,15 +148,16 @@
   },
   "active": "b9b034cdab97cded",
   "lastOpenFiles": [
+    "training_data/unprocessed_training_data/r2l/sample_1.png",
+    "documentation/project_documentation/Research Docs/Demo Temporal Map.png",
+    "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
     "training_data/unprocessed_training_data/r2l/sample_4.png",
     "training_data/unprocessed_training_data/r2l/sample_3.png",
     "training_data/unprocessed_training_data/r2l/sample_2.png",
-    "training_data/unprocessed_training_data/r2l/sample_1.png",
     "src/lib/__pycache__/TemporalMap.cpython-312.pyc",
     "src/lib/__pycache__",
     "training_data/unprocessed_training_data/r2l/20241014_135121.mp4",
     "documentation/project_documentation/first_comparison_test/adam_test_2.jpg",
-    "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
     "documentation/project_documentation/first_comparison_test/adam_test_1.jpg",
     "project_documentation/Research Docs/main.md",
     "documentation/project_info/name.txt",
@@ -164,7 +167,6 @@
     "documentation/project_documentation/working_comparison_test/jacob_3.json",
     "documentation/project_documentation/working_comparison_test/jacob_3_labeled.jpg",
     "documentation/project_documentation/working_comparison_test/jacob_3.jpg",
-    "documentation/project_documentation/working_comparison_test/jacob_2_out.jpg",
     "documentation/project_documentation/working_comparison_test/jacob_2.json",
     "documentation/project_documentation/working_comparison_test/jacob_1.json",
     "documentation/project_documentation/triple_comparison_test/jacob_3.json",
