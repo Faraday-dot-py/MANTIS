@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import cv2
 from PIL import Image
 from tqdm import tqdm
+from pathlib import Path
 
 
 # Initialize the TemporalMap object and Mediapipe Hand solutions
@@ -16,8 +17,13 @@ print("Setting up tmap maker class")
 tmapMaker.setup()
 print("Done")
 
-sourceDir = r"C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data"
-outputDir = r"C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data" 
+file_path = r"training_data\unprocessed_training_data"
+
+rootPath = os.getcwd() 
+prevRootPath = str(Path(rootPath).parents[0])
+sourceDir = prevRootPath + "\\" + file_path
+outputDir = prevRootPath + "\\" + file_path
+
 labels = os.listdir(sourceDir)  # The labels in sourceDir
 
 # Process each label
@@ -27,6 +33,10 @@ for label in labels:
         os.makedirs(saveDir)
 
     for video_file in os.listdir(f"{sourceDir}/{label}"):
+        # check if the video file is a video file 
+        if not video_file.endswith(".mp4"):
+            continue
+
         video_path = f"{sourceDir}/{label}/{video_file}"
         cap = cv2.VideoCapture(video_path)  # Open the video file
         handLandmarkArray = []

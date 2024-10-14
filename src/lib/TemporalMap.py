@@ -28,12 +28,17 @@ mpHolistic = mp.solutions.holistic
 UPPER_Z_LIMIT = 5
 LOWER_Z_LIMIT = -5
 
+file_path = r"models"
+
+rootPath = os.getcwd() 
+sourceDir = rootPath + "\\" + file_path
+
 class TemporalMap:
     def __init__(
         self,
         CONTEXT_WINDOW: int = 120,
         RENDER_TMAPS: bool = False,
-        MODEL_PATH: str = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\models\hand_landmarker.task'
+        MODEL_PATH: str = (sourceDir + r'\hand_landmarker.task')
     ):
 
         self.CONTEXT_WINDOW = CONTEXT_WINDOW

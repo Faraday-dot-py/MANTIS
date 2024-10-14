@@ -5,12 +5,18 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing import image
 from lib.TemporalMap import TemporalMap
+import os
+
+file_path = r"models"
+
+rootPath = os.getcwd() 
+sourceDir = rootPath + "\\" + file_path
 
 # Load the pre-trained model
-model = tf.keras.models.load_model(r'C:\Users\awebb\Documents\Programming\Python\Unnamed\models\direction_predictor.keras')
+model = tf.keras.models.load_model(sourceDir + r"\direction_predictor.keras")
 
 # Initialize the TemporalMap object
-tmapMaker = TemporalMap(RENDER_TMAPS=False, MODEL_PATH=r'C:\Users\awebb\Documents\Programming\Python\Unnamed\models\hand_landmarker.task')
+tmapMaker = TemporalMap(RENDER_TMAPS=False, MODEL_PATH= (sourceDir + r'\hand_landmarker.task'))
 tmapMaker.setup()
 
 # Constants

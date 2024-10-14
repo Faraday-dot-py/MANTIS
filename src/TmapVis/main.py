@@ -5,10 +5,14 @@ import numpy as np
 import matplotlib.animation as animation
 import cv2
 from tqdm import tqdm
+import os
 
+file_path = r"training_data\unprocessed_training_data\r2l"
 
+rootPath = os.getcwd() 
 # Open an image file (we will overlay points on this video, not the image)
-tmapPath = r'C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data\r2l\sample_1.png'
+tmapPath = rootPath + "\\" + file_path + r"\sample_1.png"
+print(tmapPath)
 loadedTmapImage = Image.open(tmapPath)
 
 # Convert the image to a numpy array (not directly used in the video but kept)
