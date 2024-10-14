@@ -5,5 +5,4 @@ captured_images/*
 __pycache__/*
 src/DataAugmentation/generatedTmaps/*
 testing/ASL_Videos/*
-training_data/temp/*
-training_data/WLASL/*
+training_data/*

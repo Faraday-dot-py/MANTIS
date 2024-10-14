@@ -1,0 +1,9 @@
+keyboard
+matplotlib
+mediapipe
+numpy
+opencv_contrib_python
+Pillow
+tabulate
+tensorflow
+tqdm

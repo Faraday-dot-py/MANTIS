@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2  # Import OpenCV for displaying images
 from tensorflow.keras.preprocessing import image
-from TemporalMap import TemporalMap
+from lib.TemporalMap import TemporalMap
 
 # Load the saved model
 model = tf.keras.models.load_model('DirectionPredictor.h5')

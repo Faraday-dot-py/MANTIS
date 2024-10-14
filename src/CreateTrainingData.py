@@ -1,4 +1,4 @@
-from TemporalMap import TemporalMap
+from lib.TemporalMap import TemporalMap
 
 import os
 import mediapipe as mp
@@ -16,8 +16,8 @@ print("Setting up tmap maker class")
 tmapMaker.setup()
 print("Done")
 
-sourceDir = r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data"
-outputDir = r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data" 
+sourceDir = r"C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data"
+outputDir = r"C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data" 
 labels = os.listdir(sourceDir)  # The labels in sourceDir
 
 # Process each label

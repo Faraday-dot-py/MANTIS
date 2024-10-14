@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 
 # Open an image file (we will overlay points on this video, not the image)
-tmapPath = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data\hello\sample_1.png'
+tmapPath = r'C:\Users\jacob\Documents\Github\Unnamed\training_data\unprocessed_training_data\r2l\sample_1.png'
 loadedTmapImage = Image.open(tmapPath)
 
 # Convert the image to a numpy array (not directly used in the video but kept)

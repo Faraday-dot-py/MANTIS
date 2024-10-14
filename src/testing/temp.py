@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing import image
-from TemporalMap import TemporalMap
+from lib.TemporalMap import TemporalMap
 
 # Load the pre-trained model
 model = tf.keras.models.load_model(r'C:\Users\awebb\Documents\Programming\Python\Unnamed\models\direction_predictor.keras')

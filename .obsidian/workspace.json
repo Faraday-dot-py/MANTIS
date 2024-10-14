@@ -4,18 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "e6d865e70d39387b",
+        "id": "b0e31e5d94abee06",
         "type": "tabs",
         "children": [
           {
-            "id": "531ee0ce44653168",
+            "id": "b9b034cdab97cded",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
-                "mode": "source",
-                "source": false
+                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg"
               }
             }
           }
@@ -85,7 +83,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
+                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +100,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
+                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +123,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "project_documentation/Research Docs/main.md"
+                "file": "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg"
               }
             }
           }
@@ -146,30 +144,32 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "531ee0ce44653168",
+  "active": "b9b034cdab97cded",
   "lastOpenFiles": [
-    "out.txt",
-    "testing/ASL_Videos/zip.mp4",
-    "testing/ASL_Videos/you.mp4",
-    "testing/ASL_Videos/yes.mp4",
-    "testing/ASL_Videos/yellow.mp4",
-    "testing/ASL_Videos/write.mp4",
-    "testing/ASL_Videos/wrist.mp4",
-    "testing/ASL_Videos/wrap.mp4",
-    "testing/ASL_Videos/worm.mp4",
-    "testing/ASL_Videos/with.mp4",
-    "testing/ASL_Videos/wish.mp4",
-    "training_data/unprocessed_training_data/hello/capture_8/image_30.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_29.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_28.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_27.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_26.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_25.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_24.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_23.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_22.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_21.jpg",
-    "project_documentation/notes_and_cool_things.md",
-    "project_documentation/Research Docs/main.md"
+    "documentation/project_documentation/first_comparison_test/adam_test_2.jpg",
+    "documentation/project_documentation/first_comparison_test/adam_test_1_out.jpg",
+    "documentation/project_documentation/first_comparison_test/adam_test_1.jpg",
+    "project_documentation/Research Docs/main.md",
+    "documentation/project_info/name.txt",
+    "documentation/project_info/info.txt",
+    "documentation/project_info",
+    "documentation/project_documentation/working_comparison_test/jacob_3_out.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_3.json",
+    "documentation/project_documentation/working_comparison_test/jacob_3_labeled.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_3.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_2_out.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_2_labeled.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_2.json",
+    "documentation/project_documentation/working_comparison_test/jacob_1_labeled.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_2.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_1_out.jpg",
+    "documentation/project_documentation/working_comparison_test/jacob_1.json",
+    "documentation/project_documentation/triple_comparison_test/jacob_3.json",
+    "documentation/project_documentation/triple_comparison_test/jacob_2.json",
+    "documentation/project_documentation/triple_comparison_test/jacob_1.json",
+    "documentation/project_documentation/Research Docs/main.md",
+    "documentation/project_documentation/first_comparison_test/adam_test_2.json",
+    "documentation/project_documentation/notes_and_cool_things.md",
+    "project_documentation/notes_and_cool_things.md"
   ]
 }
