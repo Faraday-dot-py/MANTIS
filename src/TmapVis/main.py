@@ -8,12 +8,12 @@ from tqdm import tqdm
 import os
 from pathlib import Path
 
-file_path = r"training_data\unprocessed_training_data\r2l"
+file_path = r"training_data\unprocessed_training_data\test"
 rootPath = os.getcwd() 
 prevRootPath = str(Path(rootPath).parents[1])
 
 # Open an image file (we will overlay points on this video, not the image)
-tmapPath = prevRootPath + "\\" + file_path + r"\sample_1.png"
+tmapPath = prevRootPath + "\\" + file_path + r"\sample_3.png"
 print(tmapPath)
 loadedTmapImage = Image.open(tmapPath)
 
