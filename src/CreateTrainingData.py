@@ -1,4 +1,4 @@
-from lib.TemporalMap import TemporalMap
+from lib.TemporalMap import TmapGenerator
 
 import os
 import mediapipe as mp
@@ -12,14 +12,12 @@ from pathlib import Path
 
 # Initialize the TemporalMap object and Mediapipe Hand solutions
 print("Loading tmap maker class")
-tmapMaker = TemporalMap(CONTEXT_WINDOW=323)
-print("Setting up tmap maker class")
-tmapMaker.setup()
+tmapMaker = TmapGenerator(TEMPLATE_SIZE=323)
 print("Done")
 
 file_path = r"training_data\unprocessed_training_data"
 
-rootPath = os.getcwd() 
+rootPath = os.getcwd()
 prevRootPath = str(Path(rootPath).parents[0])
 sourceDir = prevRootPath + "\\" + file_path
 outputDir = prevRootPath + "\\" + file_path
@@ -33,7 +31,7 @@ for label in labels:
         os.makedirs(saveDir)
 
     for video_file in os.listdir(f"{sourceDir}/{label}"):
-        # check if the video file is a video file 
+        # check if the video file is a video file
         if not video_file.endswith(".mp4"):
             continue
 
@@ -42,7 +40,9 @@ for label in labels:
         handLandmarkArray = []
 
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        with tqdm(total=total_frames, desc=f"Processing {video_file}", unit="frame") as pbar:
+        with tqdm(
+            total=total_frames, desc=f"Processing {video_file}", unit="frame"
+        ) as pbar:
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
@@ -51,9 +51,7 @@ for label in labels:
                 # Convert the frame to RGB (as Mediapipe requires RGB images)
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                landmarks = tmapMaker.calculateLandmarks(frame_rgb)
-                timg = tmapMaker.calculateTimg(landmarks)
-                tmapMaker.addTimgToBuffer(timg)
+                tmapMaker.process_landmarks(frame_rgb)
 
                 pbar.update(1)
 
@@ -70,10 +68,8 @@ for label in labels:
 
     # Display the image
     plt.imshow(image)
-    plt.axis('off')
+    plt.axis("off")
     plt.show()
 
     # Save the image as a png file
     image.save(f"{saveDir}/sample_{len(os.listdir(saveDir))}.png")
-
-

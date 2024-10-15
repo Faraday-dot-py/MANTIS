@@ -1,3 +1,5 @@
+#!NOTE: ALMOST NONE OF THIS FILE IS CORRECTLY USED
+
 import threading
 import tensorflow as tf
 import cv2
