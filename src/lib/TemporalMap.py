@@ -16,7 +16,7 @@ BLANK_IMAGE = np.concatenate(
     axis=0,
 )
 
-
+#TODO: support hexadecimal data types for the np array (the hex() function outputs a string 0x000000)
 class TmapGenerator:
     def __init__(
         self,
