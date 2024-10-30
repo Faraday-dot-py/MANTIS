@@ -132,6 +132,7 @@ def create_multiple_hand_animations(image_arrays, interval=1/30):
             ax.cla()  # Clear the axis
             ax.set_xlim(0, 255)
             ax.set_ylim(0, 255)
+            ax.invert_yaxis()
             ax.set_title(f'Frame {num}')
             
             x, y = data[i]
@@ -153,6 +154,76 @@ def create_multiple_hand_animations(image_arrays, interval=1/30):
     # Display the animation
     plt.show()
 
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import animation
+
+def save_multiple_hand_animations(image_arrays, filename='hand_animation.gif', interval=1/30):
+    """
+    Function to create multiple animations based on a list of image arrays and save it.
+
+    Parameters:
+    - image_arrays: List of numpy arrays of the images to process.
+    - filename: Filename for the saved animation (e.g., 'hand_animation.mp4').
+    - interval: Time interval between frames (in seconds).
+
+    Returns:
+    - None. Saves the animation to a file.
+    """
+
+    # Set up the figure and axes for each image_array
+    num_images = len(image_arrays)
+    fig, axes = plt.subplots(1, num_images, figsize=(5 * num_images, 5))
+
+    # Define hand connections for drawing
+    hand_connections = [
+        (0, 1), (1, 2), (2, 3), (3, 4),        # Thumb
+        (0, 5), (5, 6), (6, 7), (7, 8),        # Index Finger
+        (0, 9), (9, 10), (10, 11), (11, 12),   # Middle Finger
+        (0, 13), (13, 14), (14, 15), (15, 16), # Ring Finger
+        (0, 17), (17, 18), (18, 19), (19, 20), # Pinky Finger
+        (5, 9), (9, 13), (13, 17)              # Palm
+    ]
+
+    # Prepare the data for each frame
+    data = []
+    for image_array in image_arrays:
+        x = image_array[:, :, 0]
+        y = image_array[:, :, 1]
+        data.append((x, y))  # Append each x, y pair to data
+
+    # Update function for the animation
+    def update(num):
+        for i, ax in enumerate(axes):
+            ax.cla()  # Clear the axis
+            ax.set_xlim(0, 255)
+            ax.set_ylim(0, 255)
+            ax.invert_yaxis()
+            ax.set_title(f'Frame {num}')
+            
+            x, y = data[i]
+            
+            # Scatter plot for the points (landmarks)
+            ax.scatter(x[num], y[num], c='red')  # Plot the landmarks in red
+
+            # Draw the connections between landmarks
+            for connection in hand_connections:
+                # Get the coordinates of the connected points
+                start_idx, end_idx = connection
+                ax.plot([x[num][start_idx], x[num][end_idx]], 
+                        [y[num][start_idx], y[num][end_idx]], 
+                        'blue')  # Draw the connections in blue
+
+    # Create the animation
+    ani = animation.FuncAnimation(fig, update, frames=(list(range(len(data[0][0]) - 1))), interval=interval)
+
+    # Save the animation
+    ani.save(filename, writer='imagemagick', fps=30)
+
+    plt.close(fig)  # Close the plot to avoid displaying it
+
+
+
 
 # Apply all transformations to the points, creating a new set of points for each transformation
 loadedTmapWithoutBlue = np.array([[(landmark[0], landmark[1]) for landmark in frame] for frame in loadedTmapArray])
@@ -161,16 +232,16 @@ loadedTmapWithoutBlue = np.array([[(landmark[0], landmark[1]) for landmark in fr
 # horizontalTmap = np.array([horizontal_transform(frame, 50) for frame in loadedTmapWithoutBlue])  # Move right by 50 units
 
 # # Apply vertical transformation to each frame of the tmap
-# verticalTmap = np.array([vertical_transform(frame, 50) for frame in loadedTmapWithoutBlue])  # Move up by 50 units
+verticalTmap = np.array([vertical_transform(frame, 50) for frame in loadedTmapWithoutBlue])  # Move up by 50 units
 
 # # Apply rotational transformation to each frame of the tmap
 rotatedTmap = np.array([rotate_points(frame, 45, 9) for frame in loadedTmapWithoutBlue])  # Rotate by 45 degrees around point 0
 
 # # Apply scaling transformation to each frame of the tmap
-# scaledTmap = np.array([scale_points(frame, 0.5) for frame in loadedTmapWithoutBlue])  # Scale down by a factor of 0.5
+scaledTmap = np.array([scale_points(frame, 0.5) for frame in loadedTmapWithoutBlue])  # Scale down by a factor of 0.5
 
 # # Apply shearing transformation to each frame of the tmap
-# shearedTmap = np.array([shear_points(frame, 0.1, 0.1) for frame in loadedTmapWithoutBlue])  # Shear by 0.5 in both directions
+shearedTmap = np.array([shear_points(frame, 0.1, 0.1) for frame in loadedTmapWithoutBlue])  # Shear by 0.5 in both directions
 
 xRange = range(-10, 10)
 yRange = range(-10, 10)
@@ -230,7 +301,7 @@ def restore_blue_channel(generated_tmap, original_tmap, display=False):
     return restored_tmap
 
 
-create_multiple_hand_animations([loadedTmapArray, rotatedTmap])
+# create_multiple_hand_animations([loadedTmapArray, verticalTmap])
 
 # Save all the tmaps to a folder with a progress bar
 # total_frames = sum(len(tmap) for tmap in generatedTmaps)
@@ -242,16 +313,17 @@ create_multiple_hand_animations([loadedTmapArray, rotatedTmap])
 
 #         pbar.update(len(loadedTmapWithoutBlue))
 
-# tmaps = np.array([
-#     loadedTmap,
-#     # horizontalTmap,
-#     # verticalTmap,
-#     rotatedTmap,
-#     # scaledTmap,
-#     # shearedTmap
-# ])
+tmaps = np.array([
+    loadedTmapArray[:, :, :2],
+    horizontalTmap,
+    verticalTmap,
+    rotatedTmap,
+    scaledTmap,
+    shearedTmap
+])
 
-# create_multiple_hand_animations(tmaps)
-# # print(np.array(horizontalTmap).shape)
+save_multiple_hand_animations(tmaps)
+# print(np.array(horizontalTmap).shape)
+# print(np.array(loadedTmapArray)[:, :, :2].shape)
 
 

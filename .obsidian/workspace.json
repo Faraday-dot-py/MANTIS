@@ -13,10 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
+                "file": "project_info/name.md",
                 "mode": "source",
                 "source": false
-              }
+              },
+              "icon": "lucide-file",
+              "title": "name"
             }
           }
         ]
@@ -39,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
             }
           },
           {
@@ -54,7 +58,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "Search"
             }
           },
           {
@@ -62,7 +68,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
             }
           }
         ]
@@ -85,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
+                "file": "project_info/name.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -93,7 +101,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for name"
             }
           },
           {
@@ -102,10 +112,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "project_documentation/Research Docs/main.md",
+                "file": "project_info/name.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from name"
             }
           },
           {
@@ -116,7 +128,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
             }
           },
           {
@@ -125,8 +139,10 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "project_documentation/Research Docs/main.md"
-              }
+                "file": "project_info/name.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of name"
             }
           }
         ]
@@ -148,28 +164,28 @@
   },
   "active": "531ee0ce44653168",
   "lastOpenFiles": [
-    "out.txt",
-    "testing/ASL_Videos/zip.mp4",
-    "testing/ASL_Videos/you.mp4",
-    "testing/ASL_Videos/yes.mp4",
-    "testing/ASL_Videos/yellow.mp4",
-    "testing/ASL_Videos/write.mp4",
-    "testing/ASL_Videos/wrist.mp4",
-    "testing/ASL_Videos/wrap.mp4",
-    "testing/ASL_Videos/worm.mp4",
-    "testing/ASL_Videos/with.mp4",
-    "testing/ASL_Videos/wish.mp4",
-    "training_data/unprocessed_training_data/hello/capture_8/image_30.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_29.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_28.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_27.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_26.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_25.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_24.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_23.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_22.jpg",
-    "training_data/unprocessed_training_data/hello/capture_8/image_21.jpg",
-    "project_documentation/notes_and_cool_things.md",
-    "project_documentation/Research Docs/main.md"
+    "project_documentation/Research Docs/main.md",
+    "project_info/name.md",
+    "training_data/unprocessed_training_data/hello/sample_3.jpg",
+    "training_data/unprocessed_training_data/hello/sample_2.jpg",
+    "training_data/unprocessed_training_data/hello/sample_1.jpg",
+    "training_data/unprocessed_training_data/hello/test.mp4",
+    "training_data/unprocessed_training_data/hello/WIN_20241008_17_32_00_Pro.mp4",
+    "training_data/unprocessed_training_data/hello/test2.mp4",
+    "training_data/unprocessed_training_data/hello/WIN_20241008_17_25_22_Pro.mp4",
+    "training_data/unprocessed_training_data/hello/WIN_20241008_16_40_17_Pro.mp4",
+    "training_data/unprocessed_training_data/hello",
+    "training_data/unprocessed_training_data/test.mp4",
+    "training_data/unprocessed_training_data/WIN_20241008_16_33_33_Pro.mp4",
+    "training_data/processed_training_data/WIN_20241008_16_33_33_Pro.mp4",
+    "training_data/unprocessed_training_data/hello/capture_0/image_30.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_29.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_28.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_27.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_25.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_24.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0/image_23.jpg",
+    "training_data/unprocessed_training_data/hello/capture_0",
+    "project_documentation/notes_and_cool_things.md"
   ]
 }

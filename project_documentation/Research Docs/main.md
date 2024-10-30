@@ -1,8 +1,7 @@
 # Research Objective
-Develop a novel approach detect patterns in the motion of a series of 3D cartesian coordinate points. This methodology will be tested by translating American Sign Language gestures to English.
+Detect patterns in point cloud motion using existing, proven image segmentation models. This methodology will be tested by translating American Sign Language gestures to English.
 
 # Methodology
-
 ### Data Representation
 A set of 3-Dimensional cartesian coordinates can be represented with the notation $$(x, y, z)$$with each variable representing the position of a point along its respective axis. To represent the movement of a point over time, we can create a list of these points with equal timesteps in between each point:$$[(x_{t=1}, y_{t=1}, z_{t=1}), (x_{t=2}, y_{t=2}, _{t=2}),...]$$Similarly, to represent a set of points moving through time, we can create a 2-dimensional list consisting of these movement lists:
 $$\left[ \begin{array}{l} [(x^{p=1}_{t=1}, y^{p=1}_{t=1}, z^{p=1}_{t=1}), (x^{p=1}_{t=2}, y^{p=1}_{t=2}, z^{p=1}_{t=2}), \cdots], \\ [(x^{p=2}_{t=1}, y^{p=2}_{t=1}, z^{p=2}_{t=1}), (x^{p=2}_{t=2}, y^{p=2}_{t=2}, z^{p=2}_{t=2}), \cdots], \\ \cdots \\ \end{array} \right]$$

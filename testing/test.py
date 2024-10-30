@@ -1,61 +1,68 @@
-import tensorflow as tf
+# Import necessary libraries
+import cv2
+import mediapipe as mp
 import matplotlib.pyplot as plt
 import numpy as np
-import cv2  # Import OpenCV for displaying images
-from tensorflow.keras.preprocessing import image
-from TemporalMap import TemporalMap
 
-# Load the saved model
-model = tf.keras.models.load_model('DirectionPredictor.h5')
+# Initialize MediaPipe Holistic model
+mp_holistic = mp.solutions.holistic
+holistic = mp_holistic.Holistic()
 
-# Initialize the TemporalMap
-tmap = TemporalMap(CONTEXT_WINDOW=30)
-tmap.setup()
+# Open a webcam
+cap = cv2.VideoCapture(0)
 
-# Define image preprocessing function
-def preprocess_image(img, img_size=(30, 42)):
-    # Load and resize the image
-    img_array = image.img_to_array(img)
-    img_array = img_array / 255.0  # Normalize pixel values
-    
-    # Add a batch dimension
-    img_array = np.expand_dims(img_array, axis=0)  # Shape becomes (1, 30, 42, 3)
-    return img_array
+# Create a matplotlib figure and axis for plotting
+plt.ion()  # Turn on interactive mode for live updates
+fig, ax = plt.subplots()
+sc = ax.scatter([], [])  # Placeholder scatter plot for landmarks
 
-# Create a figure and subplots for visualization
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))  # Two subplots side by side
+def update_plot(landmarks):
+    ax.clear()  # Clear the plot to update it with new points
+    ax.set_xlim(0, 1)  # x-axis limits (MediaPipe gives normalized values)
+    ax.set_ylim(0, 1)  # y-axis limits (MediaPipe gives normalized values)
 
-while True:
-    # Capture the frame from TemporalMap
-    frame = tmap.captureImage()
-    mpFrame = tmap.convertImageToMediapipeImage(frame)
-    handLandmarks = tmap.calculateHandLandmarks(mpFrame)        
-    tmap.tmap.append(tmap.calculateTimg(handLandmarks))
+    # Extract (x, y) coordinates from the landmarks
+    x_data = [landmark.x for landmark in landmarks]
+    y_data = [landmark.y for landmark in landmarks]
 
-    # Preprocess the temporal map
-    preprocessedHandMap = preprocess_image(tmap.tmap)
+    # Plot the new points on the graph
+    sc = ax.scatter(x_data, y_data, c='r')  # Scatter plot
+    plt.draw()  # Update the figure
+    plt.pause(0.001)  # Pause for a brief moment to allow live updates
 
-    # Get model prediction
-    prediction = model.predict(preprocessedHandMap)
-    # print("--> ", prediction[0], type(prediction))
+# Main loop to process webcam frames
+while cap.isOpened():
+    # Read frames from the webcam
+    ret, frame = cap.read()
+    if not ret:
+        print("frames not found")
+        break
 
-    # Display camera view using OpenCV
-    cv2.imshow('Camera View', frame)
+    # Convert the BGR image to RGB
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # Plot the temporal map and model predictions using Matplotlib
-    ax[0].imshow(tmap.tmap)  # Show the latest temporal map
-    ax[1].bar([1, 2], prediction[0])  # Display model outputs as bar chart
-    
-    plt.draw()
-    plt.pause(0.001)
+    # Process the frame using the Holistic model
+    results = holistic.process(rgb_frame)
 
-    # Refresh temporal map display
-    tmap.refreshTmap()
+    # Check if there are any landmarks detected for the right hand
+    if results.right_hand_landmarks:
+        mp.solutions.drawing_utils.draw_landmarks(frame, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
+        
+        # Extract the landmarks for plotting
+        right_hand_landmarks = results.right_hand_landmarks.landmark
 
-    # Break loop if 'q' key is pressed
+        # Update the plot with the current hand landmarks
+        update_plot(right_hand_landmarks)
+
+    # Display the annotated frame
+    cv2.imshow("output", frame)
+
+    # Break the loop when 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Clean up
+# Release the webcam and close all windows
+cap.release()
 cv2.destroyAllWindows()
-tmap.cap.release()
+plt.ioff()  # Turn off interactive mode
+plt.show()  # Keep the final plot displayed
