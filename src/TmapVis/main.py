@@ -5,10 +5,16 @@ import numpy as np
 import matplotlib.animation as animation
 import cv2
 from tqdm import tqdm
+import os
+from pathlib import Path
 
+file_path = r"training_data\unprocessed_training_data\test"
+rootPath = os.getcwd() 
+prevRootPath = str(Path(rootPath).parents[1])
 
 # Open an image file (we will overlay points on this video, not the image)
-tmapPath = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\unprocessed_training_data\hello\sample_1.png'
+tmapPath = prevRootPath + "\\" + file_path + r"\sample_3.png"
+print(tmapPath)
 loadedTmapImage = Image.open(tmapPath)
 
 # Convert the image to a numpy array (not directly used in the video but kept)

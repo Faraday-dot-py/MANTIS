@@ -6,9 +6,15 @@ from tensorflow.keras import layers, models
 from tensorflow.keras.models import Sequential
 from tabulate import tabulate
 import time
+import os 
+from pathlib import Path
 
+file_path = r"output_images"
+
+rootPath = os.getcwd() 
+prevRootPath = str(Path(rootPath).parents[0])
 # Directory with dataset
-dataset_dir = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\output_images'  
+dataset_dir = prevRootPath + "\\" + file_path
 
 # Hyperparameters
 batch_size = 32

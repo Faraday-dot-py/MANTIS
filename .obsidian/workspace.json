@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "e6d865e70d39387b",
+        "id": "b0e31e5d94abee06",
         "type": "tabs",
         "children": [
           {
-            "id": "531ee0ce44653168",
+            "id": "b9b034cdab97cded",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -162,7 +162,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "531ee0ce44653168",
+  "active": "b9b034cdab97cded",
   "lastOpenFiles": [
     "project_documentation/Research Docs/main.md",
     "project_info/name.md",
