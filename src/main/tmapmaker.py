@@ -24,7 +24,7 @@ class TmapMaker:
     """
     Takes an OpenCV image and turns it to a Mediapipe image for processing
 
-    @param frame An OpenCV image to process
+    @param frame A cv2 image to process
     @return A mediapipe image
     """
     def convertImageToMediapipeImage(self, frame):
@@ -32,7 +32,12 @@ class TmapMaker:
 
         return mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
-    
+    """
+    Generates a tmap of just the left and right hand from a Mediapipe frame
+
+    @param frame A mediapipe frame
+    @return A tmap which represents the left and right hands
+    """
     def processFrame(self, frame):
         mpImg = self.convertImageToMediapipeImage(frame)
 
@@ -49,7 +54,13 @@ class TmapMaker:
 
         
         return leftHand + rightHand
+    
+    """
+    Generates a tmap based on a cv2 video
 
+    @param videoCap a cv2 video cap object
+    @param verbose whether or not to display a progress bar
+    """
     def processVideo(self, videoCap, verbose=False):
         tmap = []
 
@@ -81,6 +92,12 @@ class TmapMaker:
 
         return np.array(tmap)
 
+    """
+    Load a video from a path to a cv2 video object
+
+    @param path The path you want to load a video from
+    @return a cv2 video object
+    """
     def loadVideo(self, path):
         cap = cv2.VideoCapture(path)
 
@@ -88,12 +105,19 @@ class TmapMaker:
     
 
 if __name__ == "__main__":
+    # Load the TmapMaker class
     tmapMaker = TmapMaker()
+
+    # Load the video you want to process
     video = tmapMaker.loadVideo(r'C:\Users\awebb\Documents\Programming\Python\MANTIS\testing\ASL_Videos\Blabbermouth.mp4')
+
+    # Process the video into a tmap
     tmap = tmapMaker.processVideo(video, verbose=True)
 
+    # Display the tmap
     import matplotlib.pyplot as plt
 
     plt.imshow(tmap)
     plt.show()
+
     
