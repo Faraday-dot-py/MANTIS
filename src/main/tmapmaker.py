@@ -2,9 +2,12 @@ import mediapipe as mp
 import numpy as np
 import cv2
 from tqdm import tqdm
+import copy
 
 # BLANK_HAND = np.zeros((21, 3), dtype=np.uint8)
 BLANK_HAND = [[0]*3]*21
+mpHands = mp.solutions.hands
+mpDraw = mp.solutions.drawing_utils
 
 class TmapMaker:
     """
@@ -32,6 +35,16 @@ class TmapMaker:
 
         return mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
+
+    """
+    Run the hand landmarker
+
+    @param frame A mediapipe frame
+    @return A mediapipe hand landmarker results object
+    """
+    def detectHands(self, frame):
+        return self.handLandmarker.process(frame)
+
     """
     Generates a tmap of just the left and right hand from a Mediapipe frame
 
@@ -41,7 +54,7 @@ class TmapMaker:
     def processFrame(self, frame):
         mpImg = self.convertImageToMediapipeImage(frame)
 
-        landmarkerResults = self.handLandmarker.process(frame)
+        landmarkerResults = self.detectHands(mpImg)
 
         leftHand = BLANK_HAND
         rightHand = BLANK_HAND
@@ -102,6 +115,27 @@ class TmapMaker:
         cap = cv2.VideoCapture(path)
 
         return cap
+    
+    """
+    Annotates an image with the hand landmarks
+    Primarily for vision
+
+    @param frame the frame to annotate
+    @param landmarkerResults a mediapipe hand landmark results object
+    @return an annotated frame with with the connections of the hand displayed
+    """
+    def annotateImage(self, frame, landmarkerResults):
+        copiedImg = copy.copy(frame)
+
+        if landmarkerResults.left_hand_landmarks:
+            mpDraw.draw_landmarks(copiedImg, landmarkerResults.left_hand_landmarks, mpHands.HAND_CONNECTIONS)
+
+        if landmarkerResults.right_hand_landmarks:
+            mpDraw.draw_landmarks(copiedImg, landmarkerResults.right_hand_landmarks, mpHands.HAND_CONNECTIONS)
+
+        return copiedImg
+                
+
     
 
 if __name__ == "__main__":
