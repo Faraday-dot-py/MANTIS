@@ -3,6 +3,10 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 import copy
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import os
+from PIL import Image
 
 # BLANK_HAND = np.zeros((21, 3), dtype=np.uint8)
 BLANK_HAND = [[0]*3]*21
@@ -21,8 +25,12 @@ class TmapMaker:
     This is how we represent the motion of a pointcloud as a 2D image.
     """
 
-    def __init__(self):
-        self.handLandmarker = mp.solutions.holistic.Holistic()
+    def __init__(self, landmarker_model_path=r'C:\Users\awebb\Documents\Programming\Python\MANTIS\src\main\hand_landmarker.task'):
+        base_options = python.BaseOptions(model_asset_path=landmarker_model_path)
+
+        options = vision.HandLandmarkerOptions(base_options=base_options, num_hands=2)
+
+        self.hand_landmarker = vision.HandLandmarker.create_from_options(options)
 
     """
     Takes an OpenCV image and turns it to a Mediapipe image for processing
@@ -43,7 +51,11 @@ class TmapMaker:
     @return A mediapipe hand landmarker results object
     """
     def detectHands(self, frame):
-        return self.handLandmarker.process(frame)
+        return self.hand_landmarker.detect(frame)
+    
+    def sigmoid(self, x, alpha=4, beta=-1):
+        return int((1 / (1 + np.exp(-alpha*(x+beta)))) * 255)
+        # return int(x if x < 1 and x > 0 else (1 if x > 1 else 0) * 255)
 
     """
     Generates a tmap of just the left and right hand from a Mediapipe frame
@@ -51,22 +63,27 @@ class TmapMaker:
     @param frame A mediapipe frame
     @return A tmap which represents the left and right hands
     """
-    def processFrame(self, frame):
-        mpImg = self.convertImageToMediapipeImage(frame)
+    def convertLandmarkerResultsToArr(self, landmarker_results, raw=False):
+        left_timg = BLANK_HAND
+        right_timg = BLANK_HAND
 
-        landmarkerResults = self.detectHands(mpImg)
+        for (hand, handedness) in zip(landmarker_results.hand_landmarks, landmarker_results.handedness):
+            hand_timg = [(
+                landmark.x if raw else self.sigmoid(landmark.x),
+                landmark.y if raw else self.sigmoid(landmark.y),
+                landmark.z if raw else self.sigmoid(landmark.z)
+                
+            ) for landmark in hand]
 
-        leftHand = BLANK_HAND
-        rightHand = BLANK_HAND
+            # print(hand_timg)
+            
+            if handedness[0].display_name == 'Left':
+                left_timg = hand_timg
 
-        if landmarkerResults.left_hand_landmarks:
-            leftHand = [[landmark.x, landmark.y, landmark.z] for landmark in landmarkerResults.left_hand_landmarks.landmark]
+            if handedness[0].display_name == 'Right':
+                right_timg = hand_timg
 
-        if landmarkerResults.right_hand_landmarks:
-            rightHand = [[landmark.x, landmark.y, landmark.z] for landmark in landmarkerResults.right_hand_landmarks.landmark]
-
-        
-        return leftHand + rightHand
+        return np.array(left_timg + right_timg)
     
     """
     Generates a tmap based on a cv2 video
@@ -74,7 +91,7 @@ class TmapMaker:
     @param videoCap a cv2 video cap object
     @param verbose whether or not to display a progress bar
     """
-    def processVideo(self, videoCap, verbose=False):
+    def processVideo(self, videoCap, verbose=False, raw=False):
         tmap = []
 
         frames = int(videoCap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -85,8 +102,10 @@ class TmapMaker:
                     ret, frame = videoCap.read()
                     if not ret:
                         break
+                    
+                    landmarkerResults = self.detectHands(self.convertImageToMediapipeImage(frame))
 
-                    timg = self.processFrame(frame)
+                    timg = self.convertLandmarkerResultsToArr(landmarkerResults, raw=raw)
 
                     tmap.append(timg)
 
@@ -99,9 +118,11 @@ class TmapMaker:
                 if not ret:
                     break
 
-                timg = self.processFrame(frame)
+                    landmarkerResults = self.detectHands(self.convertImageToMediapipeImage(frame))
 
-                tmap.append(timg)
+                    timg = self.convertLandmarkerResultsToArr(landmarkerResults, raw=raw)
+
+                    tmap.append(timg)
 
         return np.array(tmap)
 
@@ -134,24 +155,59 @@ class TmapMaker:
             mpDraw.draw_landmarks(copiedImg, landmarkerResults.right_hand_landmarks, mpHands.HAND_CONNECTIONS)
 
         return copiedImg
-                
 
-    
 
-if __name__ == "__main__":
-    # Load the TmapMaker class
+if __name__ != "__main__":
     tmapMaker = TmapMaker()
-
-    # Load the video you want to process
-    video = tmapMaker.loadVideo(r'C:\Users\awebb\Documents\Programming\Python\MANTIS\testing\ASL_Videos\Blabbermouth.mp4')
-
-    # Process the video into a tmap
-    tmap = tmapMaker.processVideo(video, verbose=True)
-
-    # Display the tmap
     import matplotlib.pyplot as plt
+    
+    # import pandas as pd
+    # xs = np.linspace(-10, 10, 100)
+    # ys = tmapMaker.sigmoid(xs)
+
+    video_path = r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\lsa64\accept\sample_0.mp4"
+    video_cap = tmapMaker.loadVideo(video_path)
+
+    tmap = tmapMaker.processVideo(video_cap, verbose=True)
+
+    # np.save(r"C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\lsa64_tmaps\accept\sample_0.npy", tmap)
 
     plt.imshow(tmap)
     plt.show()
 
-    
+    # plt.plot(xs, ys)
+    # plt.show()
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+
+    # Load the TmapMaker class
+    tmapMaker = TmapMaker()
+
+
+    # Display the tmap
+    # import matplotlib.pyplot as plt
+    # plt.imshow(tmap)
+    # plt.show()
+
+    tld_input = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\lsa64'
+    tld_output = r'C:\Users\awebb\Documents\Programming\Python\MANTIS\training_data\lsa64_tmaps'
+
+    for video_class in os.listdir(tld_input):
+        video_class_path = os.path.join(tld_input, video_class)
+        video_class_output_path = os.path.join(tld_output, video_class)
+
+        if not os.path.exists(video_class_output_path):
+            os.makedirs(video_class_output_path)
+
+        for video in os.listdir(video_class_path):
+            video_path = os.path.join(video_class_path, video)
+            video_output_path = os.path.join(video_class_output_path, video.replace('.mp4', '.jpg'))
+
+            video_cap = tmapMaker.loadVideo(video_path)
+
+            tmap = tmapMaker.processVideo(video_cap, verbose=True, raw=True)
+
+            tmap_img = Image.fromarray((tmap * 255).astype(np.uint8))
+
+            tmap_img.save(video_output_path)
