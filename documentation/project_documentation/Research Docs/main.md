@@ -28,7 +28,7 @@ $$
 
 
 Additionally, an 8-bit color can be represented with the notation $(r, g, b)$, with each variable representing the red, green, and blue brightness values. 2D images follow a similar format to the earlier mentioned points moving through time. The following algorithm can be used to convert a set of Mediapipe hand landmarks to a ``temporal image``. A temporal image represents the positions of a set of points in an instant in time, and can be visualized by displaying the array as a line of pixels. These temporal images can be layered together in order of age to form a ``temporal map``, or tmap, which represents the movement of a set of points over time. Below is one such example image.
-![Demo Temporal Map](Demo%20Temporal%20Map.png)
+![Demo Temporal Map](/documentation/project_documentation/Research%20Docs/Demo%20Temporal%20Map.png)
 
 This Tmap can then be piped into a basic image classification model to classify the motion of the points and extract information from a relatively simple image.
 ### Applying Machine Learning
